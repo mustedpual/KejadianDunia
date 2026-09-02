@@ -1,0 +1,80 @@
+{
+  "type": "FeatureCollection",
+  "Map":"MapLibre",
+  "features": [
+      {
+        "type": "Feature",
+        "properties": {
+            "crime": "Pencurian",
+            "title":"Corruption on Sumatra",
+            "thumbnail" : "",
+            "date" : "19-09-2026",
+            "location" : "Desa Sipisang, Kecamatan Palembayan, Kabupaten Agam, Provinsi Sumatera Barat",
+            "paragraph":"when there possibilty there a chance",
+            "channel" :[],
+            "references" : []
+        },
+            
+        "geometry": { "type": "Point", "coordinates": [100.0, 0.0] }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+            "crime": "Pembunuhan",
+            "title":"Thief on Sumatra",
+            "thumbnail" : "",
+            "date" : "19-09-2026",
+            "location" : "Desa Balung, Kecamatan XIII Koto Kampar, Kabupaten Kampar, Provinsi Riau",
+            "paragraph":"when there possibilty there a chance",
+            "channel" :
+            [{
+              "name" : "Tiktok",
+              "url" : "tiktok.com/mothykov/post"
+            },
+            {
+            "name" :"youtube",
+            "url" : "youtube.com/mothykov/vid"
+            }],
+
+            "references" : 
+            [{ 
+                "url": "https://reuters.com",
+                "icon_url": "https://example.com"
+            }]
+        },
+
+        "geometry": { "type": "Point", "coordinates": [100.5, 0.0] }
+      },
+      {
+          "type": "Feature",
+          "properties": {
+            "crime": "Aktivitas Illegal",
+            "title":"Drugs on Sumatra",
+            "thumbnail" : "",
+            "date" : "19-09-2026",
+            "location" : "Desa Muaro Paiti, Kecamatan Kapur IX, Kabupaten Lima Puluh Kota, Provinsi Sumatera Barat",
+            "paragraph":"when there possibilty there a chance",
+            "channel" : 
+            [{
+              "url" : "tiktok.com/mothykov/post"
+              ,"icon_url" : "Tiktok"
+                
+              },
+              {
+            "url" : "youtube.com/mothykov/vid",
+            "icon_url" :"youtube"
+            }],
+            "references":
+            [{ 
+                "url": "https://reuters.com",
+                "icon_url": "https://example.com"
+              },
+              { 
+                "url": "https://reuters.com",
+                "icon_url": "https://example.com"
+              }]
+        },
+          "geometry": { "type": "Point", "coordinates": [100.1, 0.1] }
+      }
+  ]
+}

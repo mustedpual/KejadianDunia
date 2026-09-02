@@ -1,0 +1,123 @@
+{
+    "features": [
+      {
+        "properties": {
+          "title": "Corruption on Sumatra",
+          "channel": "tiktok.com/mothykov/post",
+          "crime": "Pencurian",
+          "date": "19-09-2026",
+          "location": "Desa Sipisang, Kecamatan Palembayan, Kabupaten Agam, Provinsi Sumatera Barat",
+          "paragraph": "when there possibilty there a chance",
+          "references": [],
+          "thumbnail": ""
+        },
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            100,
+            0
+          ]
+        }
+      },
+      {
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            100.5,
+            0
+          ]
+        },
+        "properties": {
+          "thumbnail": "",
+          "title": "Thief on Sumatra",
+          "channel": "tiktok.com/mothykov/post",
+          "crime": "Pembunuhan",
+          "date": "19-09-2026",
+          "location": "Desa Balung, Kecamatan XIII Koto Kampar, Kabupaten Kampar, Provinsi Riau",
+          "paragraph": "when there possibilty there a chance",
+          "references": [
+            {
+              "icon_url": "https://example.com",
+              "url": "https://reuters.com"
+            }
+          ]
+        },
+        "type": "Feature"
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            100.1,
+            0.1
+          ],
+          "type": "Point"
+        },
+        "properties": {
+          "thumbnail": "",
+          "title": "Drugs on Sumatra",
+          "crime": "Aktivitas Illegal",
+          "date": "19-09-2026",
+          "location": "Desa Muaro Paiti, Kecamatan Kapur IX, Kabupaten Lima Puluh Kota, Provinsi Sumatera Barat",
+          "paragraph": "when there possibilty there a chance",
+          "references": [
+            {
+              "icon_url": "https://example.com",
+              "url": "https://reuters.com"
+            },
+            {
+              "icon_url": "https://example.com",
+              "url": "https://reuters.com"
+            }
+          ]
+        },
+        "type": "Feature"
+      },
+      [
+        {
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              100.3,
+              -0.9
+            ]
+          },
+          "type": "Feature",
+          "properties": {
+            "thumbnail": "",
+            "date": "20-09-2026",
+            "location": "Kota Padang, Sumatera Barat",
+            "paragraph": "New incident reported",
+            "channel": [],
+            "references": [],
+            "crime": "Pencurian",
+            "title": "Robbery on Sumatra"
+          }
+        }
+      ],
+      [
+        {
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              3,
+              2
+            ]
+          },
+          "type": "Feature",
+          "properties": {
+            "date": "16-07-2026",
+            "location": "a",
+            "paragraph": "a",
+            "channel": [],
+            "references": [],
+            "crime": "Pencurian",
+            "title": "medan maling",
+            "thumbnail": ""
+          }
+        }
+      ]
+    ],
+    "Map": "MapLibre",
+    "type": "FeatureCollection"
+  }

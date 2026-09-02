@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kejadian Dunia</title>
+
+    <!-- 1. Link to your LOCAL CSS file -->
+    <link href="./maplibre-gl-mlt.css" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="/favicon.png">
+
+    <!-- 2. Link to your LOCAL JavaScript file -->
+    <script src="./maplibre-gl-mlt.js"></script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="detail">
+        <button work="closeEvent">&#x2715;</button>
+        <section id="channelcontent"></section>
+    </div>
+
+    <div id="subdetail">
+        <button work="closesubdetail">&#x2715;</button>
+        <section id="externalchannel"></section>
+    </div>
+    
+
+    <div id="menu">
+        <button id="events">Kejadian</button>
+        <button id="resetmap">Kembalikan Peta</button>
+    </div>
+    <div id="map"></div>
+
+    <template id="detail-template">
+        <div class="content-wrapper">
+            <h2 class="title"></h2>
+            <p class="date"></p>
+            <p class="location"></p>
+            <button class="channel-link">Channel</button>
+            <button class="refs-list">References</button>
+            <img class="thumbnail" style="display: none; max-width: 100%; height: auto;" />
+            <p class="body-text"></p>
+            </div>
+        </div>
+    </template>
+    
+    
+    <template id="menuEvent">
+        <a id="resetFilterSort" href="?">Reset</a>
+        <button id="calendarTrigger">
+            📅 Pilih Tanggal
+          </button>
+<!-- The hidden date input bounded by min/max restrictions -->
+<input type="date" id="strictDateInput" class="completely-hidden">
+        <div class="menuSearch">
+            <input id="eventSearch">
+            <a id="filterJudul" href="?">Cari</a>
+        </div>
+       
+        <!-- Modified base href tokens; JS will append _asc or _desc automatically -->
+        <select id="sortEvent">
+            <!-- This acts as a non-selectable label -->
+            <option value="?sort=tanggal" disabled selected hidden>Pilih Urutan</option>
+            <option value="?sort=tanggal">Tanggal</option>
+            <option value="?sort=judul">Judul</option>
+          </select>
+          
+          <select id="sortMode">
+            <!-- This acts as a non-selectable label -->
+            <option value="?sortM=descend" disabled selected hidden>Pilih Mode</option>
+            <option value="?sortM=ascend">Ascending</option>
+            <option value="?sortM=descend">Descending</option>
+          </select>
+
+          <select id="eventOccur">
+            <!-- This acts as a non-selectable label -->
+            <option value="common" disabled selected hidden>Pilih Kejadian</option>
+            <option value="common">Umum</option>
+            <option value="vessel">Laut oleh UKMTO</option>
+            <option value="airspace">Udara oleh EASA</option>
+            <option value="warfare">Perang oleh Liveuamap</option>
+          </select>
+
+
+          
+
+    </template>
+    
+
+<template id="event-row-template">
+    <li class="event-item" style="padding: 12px; border-bottom: 1px solid #eee; cursor: pointer;">
+        <strong class="event-title" style="display: block;"></strong>
+        <span class="event-date" style="font-size: 0.85em; color: #666;"></span>
+        <button class="event-loc-btn" id="lokasimove">Lokasi</button>
+    </li>
+</template>
+
+<template id="ref-link-template">
+    <a href="#" target="_blank" rel="noopener" style="display: block; margin-bottom: 8px;">
+        <!-- Image icon will be kept hidden unless an icon_url exists -->
+        <img class="link-icon" style="display: none; width: 16px; margin-right: 8px; vertical-align: middle;" />
+        <span class="link-text"></span>
+    </a>
+</template>
+
+
+<script type="module" src="detaiLinfo.js"></script>
+
+    
+
+</body>
+</html>

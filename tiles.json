@@ -68,6 +68,6 @@
         1
     ],
     "tiles": [
-        "http://localhost:8000/mlt/{z}-{x}-{y}.mlt" 
+        "https://kejadian-dunia.vercel.app/mlt/{z}-{x}-{y}.mlt" 
     ]
 }

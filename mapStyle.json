@@ -7,7 +7,7 @@
         17.65431710431244,
         32.954120326746775
     ],
-    "glyphs": "http://localhost:8000/mlt/{fontstack}/{range}.pbf",
+    "glyphs": "https://kejadian-dunia.vercel.app/mlt/{fontstack}/{range}.pbf",
     "layers": [
         {
             "id": "background",

@@ -25,6 +25,10 @@ menu.addEventListener('click', function(event) {
     
     // Action C: Display Event List from Memory (NO FETCH REQUIRED)
     if (buttonId === "events") {
+        const tutorialPointer = document.querySelectorAll(".tutorial-pointer");
+        tutorialPointer.forEach(pointer => {
+            pointer.remove();
+        });
         listevent();
     }
 });

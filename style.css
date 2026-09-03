@@ -92,7 +92,64 @@
    .reference-link:hover { border-color: #cbd5e0; background: #f7fafc; }
    .link-icon { width: 14px; height: 14px; margin-right: 8px; object-fit: contain; }
    .link-text { font-size: 0.85rem; color: #4a5568; font-weight: 500; }
-   
+   @keyframes bounceAndMorph {
+      0% { 
+          transform: translateY(0); 
+          content: "👆"; 
+      }
+      10% { 
+          transform: translateY(-5px); 
+          content: "👆🏻"; 
+      }
+      20% { 
+          transform: translateY(-10px); 
+          content: "👆🏼"; 
+      }
+      30% { 
+          transform: translateY(-15px); 
+          content: "👆🏽"; 
+      }
+      40% { 
+          transform: translateY(-20px); 
+          content: "👆🏾"; 
+      }
+      50% { 
+          transform: translateY(-25px); /* Highest point */
+          content: "👆🏿"; 
+      }
+      60% { 
+          transform: translateY(-20px); 
+          content: "👆🏾"; 
+      }
+      70% { 
+          transform: translateY(-15px); 
+          content: "👆🏽"; 
+      }
+      80% { 
+          transform: translateY(-10px); 
+          content: "👆🏼"; 
+      }
+      90% { 
+          transform: translateY(-5px); 
+          content: "👆🏻"; 
+      }
+      100% { 
+          transform: translateY(0); /* Return to bottom */
+          content: "👆"; 
+      }
+  }
+   .tutorial-pointer {
+      position: absolute;
+      font-size: 40px;
+      pointer-events: none;
+  }
+
+  /* Injects the active morphing content character */
+  .tutorial-pointer::after {
+      display: block;
+      animation: bounceAndMorph 2.5s infinite ease-in-out;
+      content: "👆"; /* Fallback default character */
+  }
    /* =========================================================================
       7. TABLET & DESKTOP LAYOUT RESPONSIVE ADAPTATIONS
       ========================================================================= */

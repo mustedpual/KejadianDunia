@@ -1,10 +1,12 @@
 let fetchQueue = Promise.resolve();
 // const Url = "./markers.geojson";
 // const HeaderS = {}
+const Headers = {"Access-Control-Allow-Origin" : "*"}
 const Url = "https://informed-stag-162043.upstash.io/json.get/mapEvent/";
 const HeaderS = {
     "Authorization" : "ggAAAAAAAnj7AAIgcDKuVGwervXtgpLltV5HEqV-kRfcpoAJtHQzUgdUiKYZCA",
 }
+
 
 export const EvtData = {
     type : "event",
@@ -33,9 +35,9 @@ export const WfrData = {
 
 
 await fetchAndPopulate(Url, HeaderS, EvtData);
-await fetchAndPopulate("https://sccd.royalnavy.mod.uk/api/ukmto/all", {}, VslData);
-await fetchAndPopulate("https://www.easa.europa.eu/en/api/maps/czibs", {}, AspData);
-await fetchAndPopulate("https://liveuamap.com", {}, WfrData);
+await fetchAndPopulate("https://sccd.royalnavy.mod.uk/api/ukmto/all", Headers, VslData);
+await fetchAndPopulate("https://www.easa.europa.eu/en/api/maps/czibs", Headers, AspData);
+await fetchAndPopulate("https://liveuamap.com", Headers, WfrData);
 
 // 2. PRIVATE Fetch Function (Stays inside this JS file, not exported)
 function fetchAndPopulate(url, headerS, constData) {

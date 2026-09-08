@@ -63,30 +63,26 @@
         <!-- Modified base href tokens; JS will append _asc or _desc automatically -->
         <select id="sortEvent">
             <!-- This acts as a non-selectable label -->
-            <option value="?sort=tanggal" disabled selected hidden>Pilih Urutan</option>
-            <option value="?sort=tanggal">Tanggal</option>
-            <option value="?sort=judul">Judul</option>
+            <option value="" disabled selected hidden>Pilih Urutan</option>
+            <option value="tanggal">Tanggal</option>
+            <option value="judul">Judul</option>
           </select>
           
           <select id="sortMode">
             <!-- This acts as a non-selectable label -->
-            <option value="?sortM=descend" disabled selected hidden>Pilih Mode</option>
-            <option value="?sortM=ascend">Ascending</option>
-            <option value="?sortM=descend">Descending</option>
+            <option value="" disabled selected hidden>Pilih Mode</option>
+            <option value="ascend">Ascending</option>
+            <option value="descend">Descending</option>
           </select>
 
           <select id="eventOccur">
             <!-- This acts as a non-selectable label -->
-            <option value="common" disabled selected hidden>Pilih Kejadian</option>
+            <option value="" disabled selected hidden>Pilih Kejadian</option>
             <option value="common">Umum</option>
-            <option value="vessel" disabled >Laut oleh UKMTO</option>
+            <option value="vessel">Laut oleh UKMTO</option>
             <option value="airspace">Udara oleh EASA</option>
-            <option value="warfare" disabled >Perang oleh Liveuamap</option>
+            <option value="warfare">Perang oleh Liveuamap</option>
           </select>
-
-
-          
-
     </template>
     
 
@@ -109,7 +105,6 @@
 
 <script type="module" src="detaiLinfo.js"></script>
 <script src="https://pl31194969.profitableratecpmnetwork.com/21/8a/e3/218ae3e226d48edbcbc0f5228e7baf5a.js"></script>
-
     
 
 </body>

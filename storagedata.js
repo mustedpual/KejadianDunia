@@ -150,7 +150,6 @@ function fetchAndPopulate(constData) {
                     features: [...data.features] 
                 };
             }
-            console.log(constData.type, constData.temp);
             
 
             async function dataTypefetch(constdatatype, response) {

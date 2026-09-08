@@ -58,10 +58,8 @@ export function processAndRender(listContainer) {
             date = rawDate ? rawDate.split('T')[0] : "";
             crime = props.pinColour;
         } else if (occurQuery === "airspace") {
-            const htmlLink = props.link || "";
-            const match = htmlLink.match(/>([^<]+)<\/a>/);
-            title = match ? match[1] : "Airspace Event";
-            date = "";
+            title = props.airspace;
+            date = props.date_start || "";;
             crime = props.status;
         }  else {
             // Common event mapping

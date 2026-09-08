@@ -27,8 +27,6 @@ container.addEventListener('click', function(event) {
 container.addEventListener('scroll', () => {
     // Access scroll properties from the target element
     scrollContainer = container.scrollTop;
-    
-    console.log(`Scrolled - Top: ${scrollContainer}px`);
   });
 
 // Main Exported Entry Point

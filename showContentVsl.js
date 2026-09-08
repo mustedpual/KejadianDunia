@@ -1,6 +1,6 @@
 let subdetail = {};
 export function showContentVsl(feature) {
-    // FIXED: Flush previous pin data instantly so zero-data pins don't accidentally display old data
+    // FIXED: Bersihkan data pin sebelumnya agar pin tanpa data tidak menampilkan data lama
     subdetail = {}; 
 
     const props = feature.properties;
@@ -8,36 +8,36 @@ export function showContentVsl(feature) {
     const content = document.querySelector("section");
     
     detail.style.display = "inline-block";
-    content.textContent = ""; // Clear out previous view
+    content.textContent = ""; // Kosongkan tampilan sebelumnya
 
-    // 1. Get the template and clone its structural node tree
+    // 1. Ambil template dan kloning struktur nodenya
     const template = document.getElementById("detail-template");
     const clone = document.importNode(template.content, true);
 
-    // 2. Hydrate mandatory core text fields using UKMTO attributes
-    const titleText = props.incidentTypeName 
-        ? `${props.incidentTypeName} (${props.incidentIssuer || 'UKMTO'} #${props.incidentNumber || ''})`
-        : "No Title";
-    clone.querySelector(".title").textContent = titleText;
-    clone.querySelector(".body-text").textContent = props.otherDetails || "";
+    // 2. Tentukan teks dengan prioritas Bahasa Indonesia terlebih dahulu
+    const titleText = `[#${props.incidentNumber || ''}] ${props.incidentTypeNameId || props.incidentTypeName || "Tidak Ada Judul"}`;
+    const bodyText = props.otherDetailsId || props.otherDetails || "";
+    const placeText = props.place ? `Lokasi: ${props.place}` : "";
+    const dateText = props.utcDateOfIncident ? new Date(props.utcDateOfIncident).toLocaleString('id-ID') : "";
 
-    // 3. Handle optional strings natively using UKMTO date and location/place
+    // Hidrasi teks inti wajib
+    clone.querySelector(".title").textContent = titleText;
+    clone.querySelector(".body-text").textContent = bodyText;
+
+    // 3. Tangani string opsional secara mandiri (Tanggal & Tempat)
     const dateEl = clone.querySelector(".date");
-    if (props.utcDateOfIncident || props.utcDateCreated) {
-        dateEl.textContent = props.utcDateOfIncident || props.utcDateCreated;
-    } else {
-        dateEl.remove();
+    if (dateEl) {
+        if (dateText) dateEl.textContent = dateText;
+        else dateEl.remove();
     }
 
     const locEl = clone.querySelector(".location");
-    if (props.place || props.locationLatitudeDDDMMSS) {
-        locEl.textContent = props.place ? `${props.place} [${props.locationLatitudeDDDMMSS}, ${props.locationLongitudeDDDMMSS}]` : `${props.locationLatitudeDDDMMSS}, ${props.locationLongitudeDDDMMSS}`;
-    } else {
-        locEl.remove();
+    if (locEl) {
+        if (placeText) locEl.textContent = placeText;
+        else locEl.remove();
     }
 
-    // HELPER: Map frameworks pass arrays inside features as stringified JSON strings.
-    // This safely ensures we parse them or fall back to an empty array [].
+    // HELPER: Parsing array dengan aman dari string JSON atau array langsung
     function safeParseArray(dataField) {
         if (!dataField) return [];
         if (Array.isArray(dataField)) return dataField;
@@ -49,12 +49,12 @@ export function showContentVsl(feature) {
         }
     }
 
-    // 4. Handle conditional links & metadata (e.g., vessel type/status as secondary triggers if needed)
+    // 4. Tangani tautan & gambar kondisional (Channel)
     const parsedChannels = safeParseArray(props.channel);
     const channelBtn = clone.querySelector(".channel-link");
     
     if (channelBtn) {
-        channelBtn.textContent = `Vessel Type: ${props.vesselType || 'N/A'} (${parsedChannels.length})`;
+        channelBtn.textContent = `Saluran (${parsedChannels.length})`;
         
         if (parsedChannels.length > 0) {
             subdetail.channel = parsedChannels;
@@ -68,15 +68,18 @@ export function showContentVsl(feature) {
 
     if (props.thumbnail) {
         const thmEl = clone.querySelector(".thumbnail");
-        thmEl.src = props.thumbnail;
-        thmEl.style.display = "block";
+        if (thmEl) {
+            thmEl.src = props.thumbnail;
+            thmEl.style.display = "block";
+        }
     }
 
+    // Tangani Referensi
     const parsedReferences = safeParseArray(props.references);
     const refsBtn = clone.querySelector(".refs-list");
     
     if (refsBtn) {
-        refsBtn.textContent = `View References (${parsedReferences.length})`;
+        refsBtn.textContent = `Lihat Referensi (${parsedReferences.length})`;
         
         if (parsedReferences.length > 0) {
             subdetail.references = parsedReferences;
@@ -91,40 +94,36 @@ export function showContentVsl(feature) {
     function rendersubdetail(listToProcess) {
         const subcontainer = document.getElementById('subdetail');
         const targetSection = document.getElementById('externalchannel');
-        const template = document.getElementById('ref-link-template');
+        const templateRef = document.getElementById('ref-link-template');
         
-        if (!targetSection || !template) return;
+        if (!targetSection || !templateRef) return;
         
-        targetSection.innerHTML = ""; // Clear old links
+        targetSection.innerHTML = ""; // Bersihkan tautan lama
         
         listToProcess.forEach(item => {
             if (!item || !item.url) return;
     
-            // Clone the template fragment structure
-            const clone = document.importNode(template.content, true);
-            const linkref = clone.querySelector("a");
-            const iconImg = clone.querySelector(".link-icon");
-            const textEl = clone.querySelector(".link-text");
+            const cloneRef = document.importNode(templateRef.content, true);
+            const linkref = cloneRef.querySelector("a");
+            const iconImg = cloneRef.querySelector(".link-icon");
+            const textEl = cloneRef.querySelector(".link-text");
     
-            // Configure the anchor attributes
             linkref.href = item.url.startsWith('http') ? item.url : `https://${item.url}`;
             textEl.textContent = item.name || item.url;
             
-            // Conditionally display the icon image node
             if (item.icon_url && iconImg) {
                 iconImg.src = item.icon_url;
                 iconImg.style.display = "inline-block";
             }
             
-            // Append the operational cloned elements into your container section
-            targetSection.appendChild(clone);
+            targetSection.appendChild(cloneRef);
         });
         
         if (subcontainer) {
-            subcontainer.style.display = "block"; // Enforce correct stacking layout
+            subcontainer.style.display = "block"; 
         }
     }
 
-    // 6. Mount the fully populated layout straight to the visible DOM
+    // 6. Pasang layout yang terisi penuh langsung ke DOM yang terlihat
     content.appendChild(clone);
 }

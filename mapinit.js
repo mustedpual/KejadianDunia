@@ -8,7 +8,7 @@ export { EvtData, VslData, AspData, WfrData } from './storagedata.js';
 // 2. Import them normally for use within this current file
 import { showContentEvt } from './showContentEvt.js';
 import { showContentVsl } from './showContentVsl.js';
-import { EvtData, VslData, AspData, WfrData } from './storagedata.js';
+import { EvtData, VslData, AspData, WfrData, EsriMap } from './storagedata.js';
 import { showContentAsp } from './showContentAsp.js';
 import { showContentWfr } from './showContentWfr.js';
 
@@ -23,7 +23,30 @@ export const map = new maplibregl.Map({
 map.addControl(new maplibregl.NavigationControl(), 'top-right');
 
 map.on('load', async () => {
+    const waybackItem = EsriMap.temp
+    // 1. Transform Esri's template parameters to MapLibre parameters
+    const tileUrl = waybackItem.itemURL
+        .replace('{level}', '{z}')
+        .replace('{row}', '{y}')
+        .replace('{col}', '{x}');
 
+    // 2. Add the raster source using data from the object
+    map.addSource(`wayback-${waybackItem.index}`, {
+        type: 'raster',
+        tiles: [tileUrl],
+        tileSize: 256,
+        minzoom: 10,
+        maxzoom: 23, // Esri World Imagery supports up to zoom 23
+        attribution: waybackItem.itemTitle
+    });
+
+    // 3. Add the layer to render it on the map
+    map.addLayer({
+        id: `wayback-layer-${waybackItem.index}`,
+        type: 'raster',
+        source: `wayback-${waybackItem.index}`
+    });
+    
     // 1. Add your GeoJSON sources
     map.addSource('evt-source', {
         type: 'geojson',
@@ -123,9 +146,8 @@ map.on('load', async () => {
                 // (Change 'status' or 'warningType' to match your actual GeoJSON property name)
                 'icon-color': [
                     'match',
-                    ['get', 'type'], // <-- Replace 'status' with your data's property key (e.g. 'warningLevel', 'category', etc.)
-                    'easa_conflict_zone', '#FF1744',       // Red for attacks/high threat
-                    'conflict_zone_information_notes', '#00E5FF',      // Yellow/Orange for warnings
+                    ['get', 'status'], // <-- Replace 'status' with your data's property key (e.g. 'warningLevel', 'category', etc.)
+                    'Active', '#FF1744',       // Red for attacks/high threat
                     '#FF9100'                  // Default fallback color (Green)
                 ],
                 "icon-halo-color": "#FFFFFF",

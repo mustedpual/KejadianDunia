@@ -1,187 +1,212 @@
 let fetchQueue = Promise.resolve();
 
+// Helper to generate current month metrics dynamically based on system clock
+function getCurrentMonth() {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = String(now.getMonth() + 1).padStart(2, '0');
+    const lastDay = new Date(currentYear, now.getMonth() + 1, 0).getDate();
+
+    return {
+        yearMonth: `${currentYear}-${currentMonth}`,          // e.g., "2026-09"
+        startDate: `${currentYear}-${currentMonth}-01`,      // e.g., "2026-09-01"
+        endDate: `${currentYear}-${currentMonth}-${lastDay}`, // e.g., "2026-09-30"
+        vesselPattern: `${currentYear}-${currentMonth}%`     // e.g., "2026-09%"
+    };
+}
+
+export const EsriMap = {
+    type: "esrimap",
+    parent: null,
+    temp: null, 
+    url: "https://s3-us-west-2.amazonaws.com/config.maptiles.arcgis.com/waybackconfig.json",
+    methodUrl: "GET",
+    HeaderS: {},
+};
+
 export const EvtData = {
-    type : "event",
-    parent: null, 
-    temp: null,   
-    url : "https://informed-stag-162043.upstash.io/json.get/mapEvent/", // Upstash usually allows direct fetch, or wrap it if needed
-    HeaderS : {
-        "Authorization" : "ggAAAAAAAnj7AAIgcDKuVGwervXtgpLltV5HEqV-kRfcpoAJtHQzUgdUiKYZCA",
+    type: "event",
+    parent: null,
+    temp: null, 
+    url: "https://informed-stag-162043.upstash.io/json.get/mapEvent/",
+    methodUrl: "GET",
+    HeaderS: {
+        "Authorization": "ggAAAAAAAnj7AAIgcDKuVGwervXtgpLltV5HEqV-kRfcpoAJtHQzUgdUiKYZCA",
     },
 };
 
-// Route restricted URLs through your Vercel proxy
 export const VslData = {
-    type : "vessel",
-    parent: null, 
-    temp: null,   
-    url : `/api/proxy?url=${encodeURIComponent("https://sccd.royalnavy.mod.uk/api/ukmto/all")}`,
-    HeaderS : {}
+    type: "vessel",
+    parent: null,
+    temp: null,
+    url: "https://mapsevent-mustedpual.aws-ap-northeast-1.turso.io/",
+    methodUrl: "POST",
+    HeaderS: {
+        "Authorization": "Bearer eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicm8iLCJpYXQiOjE3ODQzODY0MjgsImlkIjoiMDE5ZjcyZGQtYmUwMS03NTMwLWFiODctMTBmMDY5Njg3MTA1Iiwia2lkIjoidVJzRDVwWWw1OW8tU3haYlpZUFl0TGhhb2Mya25RRlpuUVJsa3AzQVNSSSIsInJpZCI6ImQzZmQ3NzcxLTI2ZDktNDdlZi04ZThmLTYzNTAyODY2ZmU5NiJ9.ut9-U5nW8Zkr4mvasUmVdcJ_OwLnx1-jT-TJwwknkYEaQ1l1P6-gljzefaVK9rdN6TedzZqwcBMlY1CvqWyvAA"
+    },
+    get reqBody() {
+        return {
+            statements: [
+                `SELECT * FROM ukmto_events WHERE utcDateOfIncident LIKE '${getCurrentMonth().vesselPattern}';`
+            ]
+        };
+    },
 };
 
-export const AspData= {
-    type : "airspace",
-    parent : null,
-    temp : null,
-    url : `/api/proxy?url=${encodeURIComponent("https://www.easa.europa.eu/en/api/maps/czibs")}`,
-    HeaderS : {}
-}
+export const AspData = {
+    type: "airspace",
+    parent: null,
+    temp: null,
+    url: "https://mapsevent-mustedpual.aws-ap-northeast-1.turso.io/",
+    methodUrl: "POST",
+    HeaderS: {
+        "Authorization": "Bearer eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicm8iLCJpYXQiOjE3ODQzODY0MjgsImlkIjoiMDE5ZjcyZGQtYmUwMS03NTMwLWFiODctMTBmMDY5Njg3MTA1Iiwia2lkIjoidVJzRDVwWWw1OW8tU3haYlpZUFl0TGhhb2Mya25RRlpuUVJsa3AzQVNSSSIsInJpZCI6ImQzZmQ3NzcxLTI2ZDktNDdlZi04ZThmLTYzNTAyODY2ZmU5NiJ9.ut9-U5nW8Zkr4mvasUmVdcJ_OwLnx1-jT-TJwwknkYEaQ1l1P6-gljzefaVK9rdN6TedzZqwcBMlY1CvqWyvAA"
+    },
+    get reqBody() {
+        const month = getCurrentMonth();
+        return {
+            statements: [
+                // Converts DB's DD/MM/YYYY format to YYYY-MM-DD on the fly and checks for current month overlap
+                `SELECT * FROM easa_czibs WHERE (SUBSTR(date_start, 7, 4) || '-' || SUBSTR(date_start, 4, 2) || '-' || SUBSTR(date_start, 1, 2)) <= '${month.endDate}' AND (SUBSTR(date_end, 7, 4) || '-' || SUBSTR(date_end, 4, 2) || '-' || SUBSTR(date_end, 1, 2)) >= '${month.startDate}';`
+            ]
+        };
+    },
+};
 
 export const WfrData = {
-    type : "warfare",
-    parent : null,
-    temp : null,
-    url : `/api/proxy?url=${encodeURIComponent("https://liveuamap.com")}`,
-    HeaderS : {}
-}
+    type: "warfare",
+    parent: null,
+    temp: null,
+    url: "https://mapsevent-mustedpual.aws-ap-northeast-1.turso.io/",
+    methodUrl: "POST",
+    HeaderS: {
+        "Authorization": "Bearer eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicm8iLCJpYXQiOjE3ODQzODY0MjgsImlkIjoiMDE5ZjcyZGQtYmUwMS03NTMwLWFiODctMTBmMDY5Njg3MTA1Iiwia2lkIjoidVJzRDVwWWw1OW8tU3haYlpZUFl0TGhhb2Mya25RRlpuUVJsa3AzQVNSSSIsInJpZCI6ImQzZmQ3NzcxLTI2ZDktNDdlZi04ZThmLTYzNTAyODY2ZmU5NiJ9.ut9-U5nW8Zkr4mvasUmVdcJ_OwLnx1-jT-TJwwknkYEaQ1l1P6-gljzefaVK9rdN6TedzZqwcBMlY1CvqWyvAA"
+    },
+    get reqBody() {
+        const month = getCurrentMonth();
+        return {
+            statements: [
+                // Uses year-month-day layout with LIKE for the current month
+                `SELECT * FROM warfare_events WHERE date LIKE '${month.yearMonth}%';`
+            ]
+        };
+    },
+};
 
-await fetchAndPopulate(EvtData.url, EvtData.HeaderS, EvtData);
-await fetchAndPopulate(VslData.url, VslData.HeaderS, VslData);
-await fetchAndPopulate(AspData.url, AspData.HeaderS, AspData);
-await fetchAndPopulate(WfrData.url, WfrData.HeaderS, WfrData);
+// Execute all data pipelines sequentially
+await fetchAndPopulate(EvtData);
+await fetchAndPopulate(VslData);
+await fetchAndPopulate(AspData);
+await fetchAndPopulate(WfrData);
+await fetchAndPopulate(EsriMap);
 
-function fetchAndPopulate(url, headerS, constData) {
-    fetchQueue = fetchQueue.then(async() => {
+function fetchAndPopulate(constData) {
+    fetchQueue = fetchQueue.then(async () => {
         try {
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: headerS
-            });
+            const options = {
+                method: constData.methodUrl,
+                headers: constData.HeaderS
+            };
+
+            // Only attach body if method is POST and reqBody exists
+            if (constData.methodUrl === "POST" && constData.reqBody) {
+                options.body = JSON.stringify(constData.reqBody);
+            }
+
+            const response = await fetch(constData.url, options);
+            
+            const data = await dataTypefetch(constData.type, response);
+            
+            constData.parent = data;
+            if (constData.type === "esrimap"){
+                // Convert to [key, value] pairs to keep the index
+                const entries = Object.entries(data);
+                
+                if (entries.length > 0) {
+                    function extractDate(itemTitle) {
+                        const match = itemTitle?.match(/\d{4}-\d{2}-\d{2}/);
+                        return match ? new Date(match[0]) : new Date(0);
+                    }
+
+                    // Reduce to find the entry with the latest date
+                    const latestEntry = entries.reduce((latest, current) => {
+                        const currentDate = extractDate(current[1].itemTitle);
+                        const latestDate = extractDate(latest[1].itemTitle);
+                        return currentDate > latestDate ? current : latest;
+                    });
+
+                    // Assign an object that includes the index and the filtered item
+                    constData.temp = {
+                        index: latestEntry[0], // e.g., "6543"
+                        ...latestEntry[1]      // the rest of the item properties
+                    };
+                } else {
+                    constData.temp = {};
+                }
+            }
+            else {
+                constData.temp = {
+                    ...data,
+                    features: [...data.features] 
+                };
+            }
+            console.log(constData.type, constData.temp);
+            
 
             async function dataTypefetch(constdatatype, response) {
-                if (constdatatype === "event") {
-                    const rawdata = await response.json();
-                    return JSON.parse(rawdata.result);
+                const rawdata = await response.json();
+                
+                const resultObj = typeof rawdata.result === "string" 
+                    ? JSON.parse(rawdata.result) 
+                    : (rawdata.results || rawdata);
+            
+                if (["esrimap", "event"].includes(constdatatype)) {
+                    return resultObj;
                 }
-
-                if (constdatatype === "vessel") {
-                    const rawdata = await response.json();
-                    return {
-                        type: "FeatureCollection",
-                        features: rawdata.map(item => ({
-                            type: "Feature",
-                            geometry: {
-                                type: "Point",
-                                coordinates: [item.locationLongitude, item.locationLatitude]
-                            },
-                            properties: { ...item }
-                        }))
+            
+                if (["vessel", "airspace", "warfare"].includes(constdatatype)) {
+                    const resultSet = Array.isArray(resultObj) ? resultObj[0]?.results : resultObj.results;
+                    
+                    if (!resultSet || !resultSet.columns || !resultSet.rows) {
+                        console.warn(`Unexpected data format for ${constdatatype}`);
+                        return { type: "FeatureCollection", features: [] };
                     }
-                }
-
-                if (constdatatype === "airspace") {
-                    const rawdata = await response.json();
-                    return rawdata;
-                }
-                
-                if (constdatatype === "warfare") {
-                    const extractLiveUAMapDate = (urlStr) => {
-                        const pattern = /\/(\d{4})\/(\d{1,2})-([a-z]+)-\d+-/i;
-                        const match = urlStr.match(pattern);
-                        if (!match) return null;
-                    
-                        const [, year, day, monthName] = match;
-                        const months = {
-                            january: '01', february: '02', march: '03', april: '04', 
-                            may: '05', june: '06', july: '07', august: '08', 
-                            september: '09', october: '10', november: '11', december: '12'
-                        };
-                    
-                        const mm = months[monthName.toLowerCase()];
-                        const dd = String(day).padStart(2, '0');
-                        if (!mm) return null;
-                    
-                        return `${year}-${mm}-${dd}`;
-                    };
-                
-                    const rawdata = await response.text();
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(rawdata, 'text/html');
-                    const listwar = doc.querySelectorAll(".sourcees");
-                
-                    const featurePromises = Array.from(listwar).map(async (el) => {
-                        let sublink = el.getAttribute('data-link');
-                        if (!sublink) return null;
-                
-                        // Ensure relative links become absolute before passing to proxy
-                        if (sublink.startsWith('/')) {
-                            sublink = `https://liveuamap.com${sublink}`;
-                        }
-                
-                        try {
-                            // Route sublink fetches through the proxy to prevent CORS errors here too
-                            const proxySublink = `/api/proxy?url=${encodeURIComponent(sublink)}`;
-                            const subResponse = await fetch(proxySublink);
-                            const subHtml = await subResponse.text();
-                            
-                            const subdoc = parser.parseFromString(subHtml, 'text/html');
-                            const eventScriptMatch = subHtml.match(/document\.addEventListener\(['"]DOMContentLoaded['"][\s\S]*?\);/);
-                
-                            let lat = 48.8829; 
-                            let lng = 31.1810; 
-                
-                            if (eventScriptMatch) {
-                                const eventScript = eventScriptMatch[0];
-                                const latMatch = eventScript.match(/lat\s*=\s*([0-9.-]+)/);
-                                const lngMatch = eventScript.match(/lng\s*=\s*([0-9.-]+)/);
-                            
-                                if (latMatch) lat = parseFloat(latMatch[1]);
-                                if (lngMatch) lng = parseFloat(lngMatch[1]);
-                            }
-                
-                            const infozone = subdoc.querySelector(".popup-text");
-                            const status = infozone?.querySelector(".bgma")?.getAttribute('data-src') || null;
-                            const title = infozone?.querySelector("h2")?.textContent?.trim() || null;
-                            const locationText = infozone?.querySelector(".tagas strong")?.textContent?.trim() || null;
-                            const thumbnail = infozone?.querySelector(".popup_video + * img")?.src || null;
-                            const reference = subdoc?.querySelector(".source-link")?.href || null;
-                
-                            return {
-                                type: "Feature",
-                                geometry: {
-                                    type: "Point",
-                                    coordinates: [lng, lat] 
-                                },
-                                properties: {
-                                    references: [sublink, reference].filter(Boolean),
-                                    title: title,
-                                    status: status,
-                                    location: locationText,
-                                    thumbnail: thumbnail,
-                                    date: extractLiveUAMapDate(sublink) 
-                                }
-                            };
-                        } catch (error) {
-                            console.error("Failed to fetch/parse sublink:", sublink, error);
-                            return null;
-                        }
+            
+                    const { columns, rows } = resultSet;
+            
+                    const items = rows.map(row => {
+                        const obj = {};
+                        columns.forEach((col, index) => {
+                            obj[col] = row[index];
+                        });
+                        return obj;
                     });
-                
-                    const features = (await Promise.all(featurePromises)).filter(Boolean);
-                
+            
+                    const features = items.map(item => ({
+                        type: "Feature",
+                        geometry: {
+                            type: "Point",
+                            coordinates: [Number(item.longitude || 0), Number(item.latitude || 0)]
+                        },
+                        properties: { ...item }
+                    }));
+            
                     return {
                         type: "FeatureCollection",
                         features: features
                     };
                 }
             }
-            
-            const data = await dataTypefetch(constData.type, response);
-            console.log(data);
-            constData.parent = data;
-            constData.temp = {
-                ...data,
-                features: [...data.features] 
-            };
-
         } catch (error) {
-            console.error("Secure fetch failed:", error);
+            console.error(`Secure fetch failed for ${constData.type}:`, error);
         }
     });
     return fetchQueue;
 }
 
+
 const subcontainer = document.getElementById('subdetail');
+// 1. Handle Closing the Detail Panel
 subcontainer.addEventListener('click', function(event) {
     const button = event.target.closest('button');
     if (!button) return;
@@ -193,3 +218,8 @@ subcontainer.addEventListener('click', function(event) {
         if (section) section.textContent = "";
     }
 });
+
+
+
+
+

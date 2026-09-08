@@ -1,15 +1,23 @@
-import { map, EvtData, VslData, AspData, WfrData,showContentEvt, showContentVsl, showContentAsp,showContentWfr } from './mapinit.js';
+import { 
+    map, EvtData, VslData, 
+    AspData, WfrData,showContentEvt, 
+    showContentVsl, showContentAsp,showContentWfr 
+} from './mapinit.js';
+
 import { parseCustomDate,convertToStandardDate } from './sortFilter.js';
-import { container } from './displayEvents.js';
+import { container, scrollContainer } from './displayEvents.js';
+
+export let savedscroll;
 
 export function processAndRender(listContainer) {
+    // 1. Safely retrieve raw data depending on occurrence type
     const urlParams = new URLSearchParams(window.location.search);
     const searchQuery = urlParams.get("cari")?.toLowerCase().trim() || "";
     const sortBy = urlParams.get("sort") || "";
+    const modeSort = urlParams.get("modeSort") || "";
     const dateQuery = urlParams.get("date") || "";
     const occurQuery = urlParams.get("occur") || "";
 
-    // 1. Safely retrieve raw data depending on occurrence type
     let rawData;
     if (occurQuery === "vessel") {
         rawData = VslData?.temp;
@@ -41,20 +49,20 @@ export function processAndRender(listContainer) {
         let crime = props.crime || "";
 
         if (occurQuery === "vessel") {
-            const typeName = props.incidentTypeName || "Incident";
+            const typeName = props.incidentTypeNameId || "Incident";
             const place = props.place || "Unknown Location";
             const vslType = (props.vesselType || "").trim();
             title = `${typeName}: ${place} ${vslType ? `(${vslType})` : ""}`;
             
             const rawDate = props.utcDateOfIncident || props.utcDateCreated || props.date || "";
             date = rawDate ? rawDate.split('T')[0] : "";
-            crime = typeName;
+            crime = props.pinColour;
         } else if (occurQuery === "airspace") {
             const htmlLink = props.link || "";
             const match = htmlLink.match(/>([^<]+)<\/a>/);
             title = match ? match[1] : "Airspace Event";
             date = "";
-            crime = props.type;
+            crime = props.status;
         }  else {
             // Common event mapping
             title = props.title || "Untitled";
@@ -81,13 +89,13 @@ export function processAndRender(listContainer) {
     }
 
     // 4. Apply Sort Ordering using the smart parseCustomDate handler
-    if (sortBy === "judul_asc") {
+    if (sortBy === "judul" && modeSort === "ascend") {
         filtered.sort((a, b) => a.uiProperties.title.localeCompare(b.uiProperties.title));
-    } else if (sortBy === "judul_desc") {
+    } else if (sortBy === "judul" && modeSort === "descend") {
         filtered.sort((a, b) => b.uiProperties.title.localeCompare(a.uiProperties.title));
-    } else if (sortBy === "tanggal_asc") {
+    } else if (sortBy === "tanggal" && modeSort === "ascend") {
         filtered.sort((a, b) => parseCustomDate(a.uiProperties.date) - parseCustomDate(b.uiProperties.date));
-    } else if (sortBy === "tanggal_desc") {
+    } else if (sortBy === "tanggal" && modeSort === "descend") {
         filtered.sort((a, b) => parseCustomDate(b.uiProperties.date) - parseCustomDate(a.uiProperties.date));
     }
 
@@ -112,6 +120,7 @@ export function processAndRender(listContainer) {
 
 function renderList(featuresArray, originalFeatures, listContainer, occurQuery) {
     listContainer.textContent = ""; 
+
 
     const listWrapper = document.createElement("ul");
     listWrapper.id = "pin-list"; 
@@ -138,17 +147,14 @@ function renderList(featuresArray, originalFeatures, listContainer, occurQuery) 
         dateEl.textContent = ui.date || "No Date";
         
         const crimeColors = {
-            "Attack": "#FF0000",
-            "Suspicious Activity": "#FFA500",
-            "Advisory": "#FFD700",
-            "Hijack": "#800080",
+            "Red": "#FF0000",
+            "Yellow": "#D4A373",
             "Pembunuhan": "#FF0000",
             "Pencurian": "#800080",
             "Aktivitas Illegal": "#0000FF",
-            'easa_conflict_zone' : '#FF1744',       
-            'conflict_zone_information_notes' : '#00E5FF',
+            'Active' : '#FF1744',       
             'bomb-1': '#FF4500',     // Orange-Red
-            'elect-1': '#FFD700',    // Gold / Yellow
+            'elect-1': '#AA7C11',    // Gold / Yellow
             'speech-10': '#4169E1',  // Royal Blue
             'phone-2': '#1E90FF',    // Dodger Blue
             'dead-2': '#8B0000',     // Dark Red
@@ -166,6 +172,7 @@ function renderList(featuresArray, originalFeatures, listContainer, occurQuery) 
     });
 
     listWrapper.addEventListener('click', function(event) {
+        savedscroll = scrollContainer
         const item = event.target.closest('li');
         const button = event.target.closest('button');
     
@@ -179,7 +186,7 @@ function renderList(featuresArray, originalFeatures, listContainer, occurQuery) 
             const section = container.querySelector("section");
             if (section) section.textContent = "";
     
-            map.flyTo({ center: [lng, lat], zoom: 12, essential: true, speed: 1.2 });
+            map.flyTo({ center: [lng, lat], zoom: 12, essential: true, speed: 2 });
         } else {
             const featureIndex = parseInt(item.getAttribute('data-index'), 10);
             const selectedFeature = originalFeatures[featureIndex];

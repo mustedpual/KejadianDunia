@@ -1,9 +1,10 @@
-import {processAndRender} from './render.js'; // Adjust path accordingly
+import {processAndRender,savedscroll} from './render.js'; // Adjust path accordingly
 import {syncFormWithUrl} from './sortFilter.js'; // Adjust path accordingly
 import {setupMenuControls} from './menuFilter.js'; // Adjust path accordingly
-export { map, EvtData} from './mapinit.js'; // Adjust path accordingly
+export { map} from './mapinit.js'; // Adjust path accordingly
 
 export const container = document.getElementById('detail');
+export let scrollContainer;
 
 // 1. Handle Closing the Detail Panel
 container.addEventListener('click', function(event) {
@@ -22,6 +23,13 @@ container.addEventListener('click', function(event) {
       listevent();
     }
 });
+
+container.addEventListener('scroll', () => {
+    // Access scroll properties from the target element
+    scrollContainer = container.scrollTop;
+    
+    console.log(`Scrolled - Top: ${scrollContainer}px`);
+  });
 
 // Main Exported Entry Point
 export function listevent() {
@@ -46,6 +54,9 @@ export function listevent() {
 
     // Initial query string parsing and data array painting
     processAndRender(listContainer);
+    if (savedscroll){
+        container.scrollTop = savedscroll;
+    }
 }
 
 

@@ -39,10 +39,33 @@ export function parseCustomDate(dateStr) {
 export function syncFormWithUrl(section) {
   const urlParams = new URLSearchParams(window.location.search);
   const searchInput = section.querySelector("#eventSearch");
+  const sortSelect = section.querySelector("#sortEvent");
+  const modeSelect = section.querySelector("#sortMode");
+  const eventSelect = section.querySelector("#eventOccur");
+  const calendarTrigger = section.querySelector("#calendarTrigger")
+  const strictDateInput = section.querySelector("#strictDateInput")
   
   if (searchInput && urlParams.has("cari")) {
       searchInput.value = urlParams.get("cari");
   }
+  if (sortSelect && urlParams.has("sort")) {
+    sortSelect.value = urlParams.get("sort");
+  }
+  if (modeSelect && urlParams.has("modeSort")) {
+    modeSelect.value = urlParams.get("modeSort");
+  }
+  if (eventSelect && urlParams.has("occur")) {
+    eventSelect.value = urlParams.get("occur");
+  }
+  if (strictDateInput && urlParams.has("date")) {
+    strictDateInput.value = urlParams.get("date");
+    const [year, month, day] = strictDateInput.value.split("-");
+    const formattedDate = `${day}-${month}-${year}`;
+    
+    if (calendarTrigger) {
+        calendarTrigger.textContent = formattedDate; // textContent is generally preferred over innerHTML for plain text
+    }
+}
 }
 
 export function openCalendar() {

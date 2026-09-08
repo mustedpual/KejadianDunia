@@ -1,149 +1,113 @@
-let subdetail = {};
-
 export function showContentWfr(feature) {
-    // Flush previous pin data instantly so zero-data pins don't accidentally display old data
-    subdetail = {}; 
+    // Clear previous sub-details and external containers when switching pins
+    const subcontainer = document.getElementById('subdetail');
+    const targetSection = document.getElementById('externalchannel');
+    if (targetSection) targetSection.innerHTML = "";
+    if (subcontainer) subcontainer.style.display = "none";
 
-    // Adjusting to your GeoJSON schema: properties are under feature.properties.properties
-    const props = feature.properties?.properties || feature.properties;
+    const props = feature.properties || {};
     const detail = document.getElementById("detail");
     const content = document.querySelector("section");
-    
+   
+    if (!detail || !content) return;
+
     detail.style.display = "inline-block";
     content.textContent = ""; // Clear out previous view
 
-    // 1. Get the template and clone its structural node tree
+    // 1. Get the template and clone its structure
     const template = document.getElementById("detail-template");
+    if (!template) return;
     const clone = document.importNode(template.content, true);
 
-    // 2. Hydrate mandatory core text fields (adjusting keys: title, description, date, etc.)
-    clone.querySelector(".title").textContent = props.title || "No Title";
-    clone.querySelector(".body-text").textContent = props.description || props.paragraph || "";
+    // 2. Map core fields directly from your GeoJSON properties
+    const titleEl = clone.querySelector(".title");
+    if (titleEl) {
+        // Use location as the card title, with a safe fallback
+        titleEl.textContent = props.location || "Liveuamap Update";
+    }
 
-    // 3. Handle optional strings natively without structural rebuilding
+    const bodyEl = clone.querySelector(".body-text");
+    if (bodyEl) {
+        // Your GeoJSON stores the event description in `props.title`
+        bodyEl.textContent = props.title || "";
+    }
+
+    // 3. Handle metadata (Date & Location)
     const dateEl = clone.querySelector(".date");
-    if (props.date) dateEl.textContent = props.date;
-    else if (dateEl) dateEl.remove();
+    if (dateEl) {
+        if (props.date) dateEl.textContent = props.date;
+        else dateEl.remove();
+    }
 
     const locEl = clone.querySelector(".location");
-    // GeoJSON coordinates can also be leveraged if location property is missing
-    const defaultLocation = feature.geometry && feature.geometry.coordinates 
-        ? `${feature.geometry.coordinates[1]}, ${feature.geometry.coordinates[0]}` 
-        : "";
-    if (props.location || defaultLocation) {
-        locEl.textContent = props.location || defaultLocation;
-    } else if (locEl) {
-        locEl.remove();
+    if (locEl) {
+        if (props.location) locEl.textContent = props.location;
+        else locEl.remove();
     }
 
-    // HELPER: Map frameworks pass arrays inside features as stringified JSON strings.
-    function safeParseArray(dataField) {
-        if (!dataField) return [];
-        if (Array.isArray(dataField)) return dataField;
-        try {
-            const parsed = JSON.parse(dataField);
-            return Array.isArray(parsed) ? parsed : [];
-        } catch (e) {
-            return [];
-        }
-    }
-
-    // 4. Handle conditional links & images (mapping 'channels' and 'references' or similar keys)
-    const parsedChannels = safeParseArray(props.channel || props.channels);
-    const channelBtn = clone.querySelector(".channel-link");
-    
-    if (channelBtn) {
-        channelBtn.textContent = `Channel (${parsedChannels.length})`;
-        
-        if (parsedChannels.length > 0) {
-            subdetail.channel = parsedChannels;
-            channelBtn.addEventListener('click', function() {
-                rendersubdetail(subdetail.channel);
-            });
-        } else {
-            channelBtn.remove(); 
-        }
-    }
-
-    const thumbSrc = props.thumbnail || props.image || props.img;
-    if (thumbSrc) {
-        const thmEl = clone.querySelector(".thumbnail");
-        if (thmEl) {
-            // Tell the browser not to send a Referer header for this image request
-            thmEl.referrerPolicy = "no-referrer"; 
-            
-            thmEl.src = thumbSrc;
+    // 4. Handle thumbnail
+    const thmEl = clone.querySelector(".thumbnail");
+    if (thmEl) {
+        if (props.athumbnail) {
+            thmEl.src = props.athumbnail;
             thmEl.style.display = "block";
+            thmEl.setAttribute("referrerpolicy", "no-referrer");
+        } else {
+            thmEl.style.display = "none";
         }
     }
-    
 
-    const parsedReferences = safeParseArray(props.references || props.refs);
+    // 5. Remove unused channel button since it's not in your GeoJSON
+    const channelBtn = clone.querySelector(".channel-link");
+    if (channelBtn) channelBtn.remove();
+
+    // 6. Build references directly using `id` and `reference`
+    let dynamicRefs = [];
+    if (props.id) {
+        dynamicRefs.push({ url: props.id, name: props.id });
+    }
+    if (props.reference) {
+        dynamicRefs.push({ url: props.reference, name: props.reference });
+    }
+
     const refsBtn = clone.querySelector(".refs-list");
-    
     if (refsBtn) {
-        refsBtn.textContent = `View References (${parsedReferences.length})`;
-        
-        if (parsedReferences.length > 0) {
-            subdetail.references = parsedReferences;
-            refsBtn.addEventListener('click', function() {
-                rendersubdetail(subdetail.references);
-            });
+        if (dynamicRefs.length > 0) {
+            refsBtn.textContent = `Lihat Referensi (${dynamicRefs.length})`;
+            refsBtn.addEventListener('click', () => rendersubdetail(dynamicRefs));
         } else {
             refsBtn.remove();
         }
     }
-    
+   
     function rendersubdetail(listToProcess) {
-        const subcontainer = document.getElementById('subdetail');
-        const targetSection = document.getElementById('externalchannel');
-        const templateRef = document.getElementById('ref-link-template');
-        
-        if (!targetSection || !templateRef) return;
-        
-        targetSection.innerHTML = ""; // Clear old links
-        
+        const subcontainerEl = document.getElementById('subdetail');
+        const targetSec = document.getElementById('externalchannel');
+        const refTemplate = document.getElementById('ref-link-template');
+       
+        if (!targetSec || !refTemplate) return;
+        targetSec.innerHTML = "";
+       
         listToProcess.forEach(item => {
-            if (!item) return;
-            
-            // Support both object structures ({url, name}) and raw string links ("https://...")
-            const itemUrl = typeof item === 'string' ? item : (item.url || item.link);
-            const itemName = typeof item === 'string' ? item : (item.name || item.title || itemUrl);
-            const itemIcon = typeof item === 'object' ? (item.icon_url || item.icon) : null;
-
-            if (!itemUrl) return;
-    
-            // Clone the template fragment structure
-            const itemClone = document.importNode(templateRef.content, true);
-            const linkref = itemClone.querySelector("a");
-            const iconImg = itemClone.querySelector(".link-icon");
-            const textEl = itemClone.querySelector(".link-text");
-    
-            // Configure the anchor attributes
+            const refClone = document.importNode(refTemplate.content, true);
+            const linkref = refClone.querySelector("a");
+            const textEl = refClone.querySelector(".link-text");
+   
             if (linkref) {
-                linkref.href = itemUrl.startsWith('http') ? itemUrl : `https://${itemUrl}`;
+                linkref.href = item.url;
             }
             if (textEl) {
-                textEl.textContent = itemName;
+                textEl.textContent = item.name;
             }
-            
-            // Conditionally display the icon image node
-            if (itemIcon && iconImg) {
-                iconImg.src = itemIcon;
-                iconImg.style.display = "inline-block";
-            } else if (iconImg) {
-                iconImg.style.display = "none";
-            }
-            
-            // Append the operational cloned elements into your container section
-            targetSection.appendChild(itemClone);
+           
+            targetSec.appendChild(refClone);
         });
-        
-        if (subcontainer) {
-            subcontainer.style.display = "block"; // Enforce correct stacking layout
+       
+        if (subcontainerEl) {
+            subcontainerEl.style.display = "block";
         }
     }
 
-    // 6. Mount the fully populated layout straight to the visible DOM
+    // 7. Mount layout to DOM
     content.appendChild(clone);
 }

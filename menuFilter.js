@@ -37,11 +37,11 @@ export function setupMenuControls(section, listContainer) {
 resetLink.addEventListener("click", (e) => {
     e.preventDefault();
     calendarTrigger.textContent = "📅 Pilih Tanggal";
-    strictDateInput.value = 
+    strictDateInput.value = "";
     searchInput.value = "";
-    sortSelect.value = "?sort=tanggal";
-    modeSelect.value = "?sortM=ascend";
-    eventSelect.value = "common"
+    sortEvent.value = "";
+    sortMode.value = "";
+    eventSelect.value = "";
     updateUrlAndRender((url) => {
         url.search = ""; 
     });
@@ -49,32 +49,34 @@ resetLink.addEventListener("click", (e) => {
 
 // 3. Handle Sorting Dropdowns (Combined Logic)
 function handleSortChange() {
-    const sortValue = sortSelect.value; // "?sort=judul", "?sort=tanggal", or empty/null
-    const modeValue = modeSelect.value; // "?sortM=ascend", "?sortM=descend", or empty/null
+    let sortParam = sortEvent.value; // "tanggal" or "judul"
+    let modeParam = sortMode.value; // "ascend" or "descend"
 
     updateUrlAndRender((url) => {
-        // Parse the parameters safely
-        let sortParam = sortValue ? new URLSearchParams(sortValue).get("sort") : null;
-        let modeParam = modeValue ? new URLSearchParams(modeValue).get("sortM") : null;
-
-        // Fallback 1: If mode is chosen but sort is missing, default sort to "tanggal"
+        // Fallback 1: If mode is chosen but sort is missing/placeholder, default sort to "tanggal"
         if (modeParam && !sortParam) {
             sortParam = "tanggal";
-            sortSelect.value = "?sort=tanggal"; // Sync the dropdown UI
+            sortEvent.value = "tanggal"; // Sync the dropdown UI
         }
 
-        // Fallback 2: If sort is chosen but mode is missing, default mode to "ascend"
+        // Fallback 2: If sort is chosen but mode is missing/placeholder, default mode to "ascend"
         if (sortParam && !modeParam) {
             modeParam = "ascend";
-            modeSelect.value = "?sortM=ascend"; // Sync the dropdown UI
+            sortMode.value = "ascend"; // Sync the dropdown UI
         }
 
-        // Apply to URL only if we have a valid sort key now
+        // Apply sort parameter separately
         if (sortParam) {
-            const direction = (modeParam === "descend") ? "desc" : "asc";
-            url.searchParams.set("sort", `${sortParam}_${direction}`);
+            url.searchParams.set("sort", sortParam);
         } else {
             url.searchParams.delete("sort");
+        }
+
+        // Apply modeSort parameter separately
+        if (modeParam) {
+            url.searchParams.set("modeSort", modeParam);
+        } else {
+            url.searchParams.delete("modeSort");
         }
 
         // Keep the active search criteria intact
@@ -101,7 +103,7 @@ strictDateInput.addEventListener("change", (e) => {
             const formattedDate = `${day}-${month}-${year}`;
             calendarTrigger.innerHTML = formattedDate;
 
-            url.searchParams.set("date", formattedDate);
+            url.searchParams.set("date", dateValue);
         } else {
             url.searchParams.delete("date");
             calendarTrigger.innerHTML = `📅 Pilih Tanggal`;

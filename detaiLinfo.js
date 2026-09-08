@@ -26,6 +26,18 @@ menu.addEventListener('click', function(event) {
     // Action C: Display Event List from Memory (NO FETCH REQUIRED)
     if (buttonId === "events") {
         const tutorialPointer = document.querySelectorAll(".tutorial-pointer");
+        if (tutorialPointer){
+                        // If 'url' is currently a string, initialize it as a URL object first
+            const url = new URL(window.location.href); 
+
+            // Set the parameter
+            url.searchParams.set("modeSort", "descend");
+            url.searchParams.set("sort", "tanggal");
+
+            // Optional: Update the browser's address bar without reloading the page
+            window.history.pushState({}, '', url);
+
+        }
         tutorialPointer.forEach(pointer => {
             pointer.remove();
         });

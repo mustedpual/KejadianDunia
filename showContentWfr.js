@@ -52,6 +52,7 @@ export function showContentWfr(feature) {
             thmEl.src = props.athumbnail;
             thmEl.style.display = "block";
             thmEl.setAttribute("referrerpolicy", "no-referrer");
+            thmEl.setAttribute("crossorigin", "anonymous");
         } else {
             thmEl.style.display = "none";
         }
@@ -63,9 +64,11 @@ export function showContentWfr(feature) {
 
     // 6. Build references directly using `id` and `reference`
     let dynamicRefs = [];
-    if (props.id) {
+    // Check if props.id exists AND is a valid URL structure
+    if (props.id && URL.canParse(props.id)) {
         dynamicRefs.push({ url: props.id, name: props.id });
     }
+
     if (props.reference) {
         dynamicRefs.push({ url: props.reference, name: props.reference });
     }

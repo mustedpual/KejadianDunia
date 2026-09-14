@@ -69,6 +69,14 @@ export function processAndRender(listContainer) {
 
         if (occurQuery === "warfare") {
             crime = props.status;
+            const rawIsoRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
+
+            if (rawIsoRegex.test(props.date)) {
+                // Modifies the outer 'date' variable correctly
+                date = props.date.slice(0, 10);
+            } else {
+                date = props.date;
+            }
         }
 
         return {
@@ -151,18 +159,18 @@ function renderList(featuresArray, originalFeatures, listContainer, occurQuery) 
             "Pencurian": "#800080",
             "Aktivitas Illegal": "#0000FF",
             'Active' : '#FF1744',       
-            'bomb-1': '#FF4500',     // Orange-Red
-            'elect-1': '#AA7C11',    // Gold / Yellow
-            'speech-10': '#4169E1',  // Royal Blue
-            'phone-2': '#1E90FF',    // Dodger Blue
-            'dead-2': '#8B0000',     // Dark Red
-            'shahed-1': '#FF8C00',   // Dark Orange
-            'medicine-2': '#32CD32', // Lime Green
-            'fires-1': '#FF0000',    // Red
-            'medicine-1':'#228B22', // Forest Green
-            'ak-1': '#A52A2A',       // Brown
-            'drone-2': '#9370DB',    // Medium Purple
-            'aa-2': '#4682B4',       // Steel Blue
+            'bomb-1': '#FF4500',    
+            'elect-1': '#AA7C11',    
+            'speech-10': '#4169E1', 
+            'phone-2': '#1E90FF',   
+            'dead-2': '#8B0000',     
+            'shahed-1': '#FF8C00',   
+            'medicine-2': '#32CD32', 
+            'fires-1': '#FF0000',   
+            'medicine-1':'#228B22', 
+            'ak-1': '#A52A2A',       
+            'drone-2': '#9370DB',    
+            'aa-2': '#4682B4',       
         };
         titleEl.style.color = crimeColors[ui.crime] || "#808080";
         

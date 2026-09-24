@@ -45,6 +45,7 @@ resetLink.addEventListener("click", (e) => {
     updateUrlAndRender((url) => {
         url.search = ""; 
     });
+    handleSortChange()
 });
 
 // 3. Handle Sorting Dropdowns (Combined Logic)

@@ -19,7 +19,7 @@ export const EsriMap = {
     type: "esrimap",
     parent: null,
     temp: null, 
-    url: "https://s3-us-west-2.amazonaws.com/config.maptiles.arcgis.com/waybackconfig.json",
+    url: "ESRI_URL",
     methodUrl: "GET",
     HeaderS: {},
 };
@@ -28,10 +28,10 @@ export const EvtData = {
     type: "event",
     parent: null,
     temp: null, 
-    url: "https://informed-stag-162043.upstash.io/json.get/mapEvent/",
+    url: "UPSTASH_URL",
     methodUrl: "GET",
     HeaderS: {
-        "Authorization": "ggAAAAAAAnj7AAIgcDKuVGwervXtgpLltV5HEqV-kRfcpoAJtHQzUgdUiKYZCA",
+        "Authorization": "UPSTASH_API_KEY",
     },
 };
 
@@ -39,10 +39,10 @@ export const VslData = {
     type: "vessel",
     parent: null,
     temp: null,
-    url: "https://mapsevent-mustedpual.aws-ap-northeast-1.turso.io/",
+    url: "TURSO_URL_DB",
     methodUrl: "POST",
     HeaderS: {
-        "Authorization": "Bearer eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicm8iLCJpYXQiOjE3ODQzODY0MjgsImlkIjoiMDE5ZjcyZGQtYmUwMS03NTMwLWFiODctMTBmMDY5Njg3MTA1Iiwia2lkIjoidVJzRDVwWWw1OW8tU3haYlpZUFl0TGhhb2Mya25RRlpuUVJsa3AzQVNSSSIsInJpZCI6ImQzZmQ3NzcxLTI2ZDktNDdlZi04ZThmLTYzNTAyODY2ZmU5NiJ9.ut9-U5nW8Zkr4mvasUmVdcJ_OwLnx1-jT-TJwwknkYEaQ1l1P6-gljzefaVK9rdN6TedzZqwcBMlY1CvqWyvAA"
+        "Authorization": "TURSO_API_KEY"
     },
     get reqBody() {
         return {
@@ -57,10 +57,10 @@ export const AspData = {
     type: "airspace",
     parent: null,
     temp: null,
-    url: "https://mapsevent-mustedpual.aws-ap-northeast-1.turso.io/",
+    url: "TURSO_URL_DB",
     methodUrl: "POST",
     HeaderS: {
-        "Authorization": "Bearer eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicm8iLCJpYXQiOjE3ODQzODY0MjgsImlkIjoiMDE5ZjcyZGQtYmUwMS03NTMwLWFiODctMTBmMDY5Njg3MTA1Iiwia2lkIjoidVJzRDVwWWw1OW8tU3haYlpZUFl0TGhhb2Mya25RRlpuUVJsa3AzQVNSSSIsInJpZCI6ImQzZmQ3NzcxLTI2ZDktNDdlZi04ZThmLTYzNTAyODY2ZmU5NiJ9.ut9-U5nW8Zkr4mvasUmVdcJ_OwLnx1-jT-TJwwknkYEaQ1l1P6-gljzefaVK9rdN6TedzZqwcBMlY1CvqWyvAA"
+        "Authorization": "TURSO_API_KEY"
     },
     get reqBody() {
         const month = getCurrentMonth();
@@ -77,10 +77,10 @@ export const WfrData = {
     type: "warfare",
     parent: null,
     temp: null,
-    url: "https://mapsevent-mustedpual.aws-ap-northeast-1.turso.io/",
+    url: "TURSO_URL_DB",
     methodUrl: "POST",
     HeaderS: {
-        "Authorization": "Bearer eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicm8iLCJpYXQiOjE3ODQzODY0MjgsImlkIjoiMDE5ZjcyZGQtYmUwMS03NTMwLWFiODctMTBmMDY5Njg3MTA1Iiwia2lkIjoidVJzRDVwWWw1OW8tU3haYlpZUFl0TGhhb2Mya25RRlpuUVJsa3AzQVNSSSIsInJpZCI6ImQzZmQ3NzcxLTI2ZDktNDdlZi04ZThmLTYzNTAyODY2ZmU5NiJ9.ut9-U5nW8Zkr4mvasUmVdcJ_OwLnx1-jT-TJwwknkYEaQ1l1P6-gljzefaVK9rdN6TedzZqwcBMlY1CvqWyvAA"
+        "Authorization": "TURSO_API_KEY"
     },
     get reqBody() {
         const month = getCurrentMonth();

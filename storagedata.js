@@ -19,7 +19,7 @@ export const EsriMap = {
     type: "esrimap",
     parent: null,
     temp: null, 
-    url: "ESRI_URL",
+    url: process.env.ESRI_URL,
     methodUrl: "GET",
     HeaderS: {},
 };
@@ -28,10 +28,10 @@ export const EvtData = {
     type: "event",
     parent: null,
     temp: null, 
-    url: "UPSTASH_URL",
+    url: process.env.UPSTASH_URL,
     methodUrl: "GET",
     HeaderS: {
-        "Authorization": "UPSTASH_API_KEY",
+        "Authorization": process.env.UPSTASH_API_KEY,
     },
 };
 
@@ -39,10 +39,10 @@ export const VslData = {
     type: "vessel",
     parent: null,
     temp: null,
-    url: "TURSO_URL_DB",
+    url: process.env.TURSO_URL_DB,
     methodUrl: "POST",
     HeaderS: {
-        "Authorization": "TURSO_API_KEY"
+        "Authorization": process.env.TURSO_API_KEY
     },
     get reqBody() {
         return {
@@ -57,10 +57,10 @@ export const AspData = {
     type: "airspace",
     parent: null,
     temp: null,
-    url: "TURSO_URL_DB",
+    url: process.env.TURSO_URL_DB,
     methodUrl: "POST",
     HeaderS: {
-        "Authorization": "TURSO_API_KEY"
+        "Authorization": process.env.TURSO_API_KEY
     },
     get reqBody() {
         const month = getCurrentMonth();
@@ -77,10 +77,10 @@ export const WfrData = {
     type: "warfare",
     parent: null,
     temp: null,
-    url: "TURSO_URL_DB",
+    url: process.env.TURSO_URL_DB,
     methodUrl: "POST",
     HeaderS: {
-        "Authorization": "TURSO_API_KEY"
+        "Authorization": process.env.TURSO_API_KEY
     },
     get reqBody() {
         const month = getCurrentMonth();
